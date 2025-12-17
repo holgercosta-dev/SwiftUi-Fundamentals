@@ -14,7 +14,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            BackgroundView(isNight: $isNight)
+            BackgroundView(isNight: isNight)
             VStack {
                 CityName(cityName: "Cupertino, CA")
                 WeatherCurrentTemp(
@@ -43,7 +43,6 @@ struct ContentView: View {
 }
 
 struct BackgroundView: View {
-    @Binding
     var isNight: Bool
 
     var body: some View {
@@ -55,7 +54,7 @@ struct BackgroundView: View {
             startPoint: .leading,
             endPoint: .bottomTrailing,
         )
-        .edgesIgnoringSafeArea(.all)
+        .ignoresSafeArea()
     }
 }
 
@@ -70,8 +69,9 @@ struct WeatherDayView: View {
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.white)
             Image(systemName: imageName)
-                .renderingMode(.original)
+                .symbolRenderingMode(.palette)
                 .resizable()
+                .foregroundStyle(.white, .orange)
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 40, height: 40)
             Text("\(temperature)°")
