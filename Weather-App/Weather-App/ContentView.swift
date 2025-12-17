@@ -45,16 +45,10 @@ struct ContentView: View {
 struct BackgroundView: View {
     var isNight: Bool
 
-    var body: some View {
-        LinearGradient(
-            colors: [
-                isNight ? .black : .blue,
-                isNight ? Color.gray : Color("lightBlue"),
-            ],
-            startPoint: .leading,
-            endPoint: .bottomTrailing,
-        )
-        .ignoresSafeArea()
+    var body: some View {        
+        ContainerRelativeShape()
+            .fill(isNight ? Color.black.gradient : Color.blue.gradient)
+            .ignoresSafeArea()
     }
 }
 
@@ -69,9 +63,8 @@ struct WeatherDayView: View {
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.white)
             Image(systemName: imageName)
-                .symbolRenderingMode(.palette)
+                .symbolRenderingMode(.multicolor)
                 .resizable()
-                .foregroundStyle(.white, .orange)
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 40, height: 40)
             Text("\(temperature)°")
