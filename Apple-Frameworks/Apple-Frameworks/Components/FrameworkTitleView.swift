@@ -26,3 +26,7 @@ struct FrameworkTitleView: View {
         .padding()
     }
 }
+
+#Preview {
+    FrameworkTitleView(name: "Name", imageName: "app-clip")
+}
