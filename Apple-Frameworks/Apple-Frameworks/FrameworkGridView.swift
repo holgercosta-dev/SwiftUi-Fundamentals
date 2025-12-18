@@ -40,6 +40,9 @@ struct FrameworkGridView: View {
                         name: framework.name,
                         imageName: framework.imageName,
                         description: framework.description,
+                        url: URL(string: framework.urlString) ?? URL(
+                            string: "https://google.com"
+                        )!,
                         isShowingDetail: $viewModel.isShowingDetail,
                     )
                 }
