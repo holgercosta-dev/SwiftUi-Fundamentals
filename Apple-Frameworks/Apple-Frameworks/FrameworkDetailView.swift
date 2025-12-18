@@ -11,13 +11,15 @@ struct FrameworkDetailView: View {
     var name: String
     var imageName: String
     var description: String
+    @Binding
+    var isShowingDetail: Bool
 
     var body: some View {
         VStack {
             HStack {
                 Spacer()
                 Button {
-                    
+                    isShowingDetail = false
                 } label: {
                     Image(systemName: "xmark")
                         .foregroundColor(Color(.label))
@@ -46,6 +48,7 @@ struct FrameworkDetailView: View {
     FrameworkDetailView(
         name: framework.name,
         imageName: framework.imageName,
-        description: framework.description
+        description: framework.description,
+        isShowingDetail: .constant(false),
     )
 }

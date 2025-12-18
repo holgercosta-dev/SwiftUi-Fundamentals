@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct FrameworkGridView: View {
+    @StateObject
+    var viewModel = FrameworkGridVM()
+
     let columns: [GridItem] = [
         GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()),
     ]
@@ -20,33 +23,31 @@ struct FrameworkGridView: View {
                             name: framework.name,
                             imageName: framework.imageName
                         )
+                        .onTapGesture {
+                            viewModel.selectedFramework = framework
+                        }
                     }
                 }
             }
             .navigationTitle("Frameworks")
+            .sheet(
+                isPresented: $viewModel.isShowingDetail,
+                onDismiss: { viewModel.isShowingDetail = false },
+                content: {
+                    let framework =
+                        viewModel.selectedFramework ?? MockData.sampleFramework
+                    FrameworkDetailView(
+                        name: framework.name,
+                        imageName: framework.imageName,
+                        description: framework.description,
+                        isShowingDetail: $viewModel.isShowingDetail,
+                    )
+                }
+            )
         }
     }
 }
 
 #Preview {
     FrameworkGridView()
-}
-
-struct FrameworkTitleView: View {
-    var name: String
-    var imageName: String
-
-    var body: some View {
-        VStack {
-            Image(imageName)
-                .resizable()
-                .frame(width: 90, height: 90)
-            Text(name)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .scaledToFit()
-                .minimumScaleFactor(0.6)
-        }
-        .padding()
-    }
 }
