@@ -11,41 +11,30 @@ struct FrameworkGridView: View {
     @StateObject
     var viewModel = FrameworkGridVM()
 
-
     var body: some View {
         NavigationView {
-            ScrollView {
-                LazyVGrid(columns: viewModel.columns) {
-                    ForEach(MockData.frameworks) { framework in
-                        FrameworkTitleView(
+            List {
+                ForEach(MockData.frameworks) { framework in
+                    NavigationLink(
+                        destination: FrameworkDetailView(
                             name: framework.name,
-                            imageName: framework.imageName
-                        )
-                        .onTapGesture {
-                            viewModel.selectedFramework = framework
+                            imageName: framework.imageName,
+                            description: framework.description,
+                            url: URL(string: framework.urlString)!,
+                            isShowingDetail: $viewModel.isShowingDetail
+                        ),
+                        label: {
+                            FrameworkTitleView(
+                                name: framework.name,
+                                imageName: framework.imageName
+                            )
                         }
-                    }
+                    )
                 }
             }
             .navigationTitle("Frameworks")
-            .sheet(
-                isPresented: $viewModel.isShowingDetail,
-                onDismiss: { viewModel.isShowingDetail = false },
-                content: {
-                    let framework =
-                        viewModel.selectedFramework ?? MockData.sampleFramework
-                    FrameworkDetailView(
-                        name: framework.name,
-                        imageName: framework.imageName,
-                        description: framework.description,
-                        url: URL(string: framework.urlString) ?? URL(
-                            string: "https://google.com"
-                        )!,
-                        isShowingDetail: $viewModel.isShowingDetail,
-                    )
-                }
-            )
         }
+        .accentColor(Color(.label))
     }
 }
 
