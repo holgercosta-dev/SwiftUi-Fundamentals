@@ -8,14 +8,22 @@
 import SwiftUI
 
 struct FrameworkGridView: View {
-    let columns: [GridItem] = [GridItem(.flexible()), GridItem(.flexible())]
+    let columns: [GridItem] = [
+        GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()),
+    ]
     var body: some View {
-        LazyVGrid(columns: columns) {
-            FrameworkTitleView(name: "App Clips", imageName: "app-clip")
-            FrameworkTitleView(name: "App Clips", imageName: "app-clip")
-            FrameworkTitleView(name: "App Clips", imageName: "app-clip")
-            FrameworkTitleView(name: "App Clips", imageName: "app-clip")
-            FrameworkTitleView(name: "App Clips", imageName: "app-clip")
+        NavigationView {
+            ScrollView {
+                LazyVGrid(columns: columns) {
+                    ForEach(MockData.frameworks) { framework in
+                        FrameworkTitleView(
+                            name: framework.name,
+                            imageName: framework.imageName
+                        )
+                    }
+                }
+            }
+            .navigationTitle("Frameworks")
         }
     }
 }
@@ -39,5 +47,6 @@ struct FrameworkTitleView: View {
                 .scaledToFit()
                 .minimumScaleFactor(0.6)
         }
+        .padding()
     }
 }
