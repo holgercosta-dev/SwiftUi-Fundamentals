@@ -8,8 +8,15 @@
 import SwiftUI
 
 struct FilmListView: View {
+    @State private var filmsViewModel = FilmsVM()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List(filmsViewModel.films) { film in
+            Text(film.title)
+        }
+        .task {
+            await filmsViewModel.fetchFilms()
+        }
     }
 }
 
