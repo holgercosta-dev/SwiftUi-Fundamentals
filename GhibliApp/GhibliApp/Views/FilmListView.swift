@@ -14,12 +14,21 @@ struct FilmListView: View {
         NavigationStack {
             switch filmsViewModel.state {
             case .idle:
-                Text("No films yet")
+                EmptyView()
             case .loading:
-                Text("Loading...")
+                ProgressView()
             case .loaded(let array):
                 List(array) { film in
-                    Text(film.title)
+                    NavigationLink(value: film) {
+                        HStack {
+                            FilmImageView(urlPath: film.image)
+                                .frame(width: 100, height: 150)
+                            Text(film.title)
+                        }
+                    }
+                }
+                .navigationDestination(for: Film.self) { film in
+                    FilmDetailView(film: film)
                 }
             case .error(let error):
                 Text(error)

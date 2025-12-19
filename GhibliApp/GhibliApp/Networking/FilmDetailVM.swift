@@ -20,7 +20,7 @@ class FilmDetailVM {
 
     var state: State = .idle
 
-    let service: GhibliService
+    private let service: GhibliService
 
     init(service: GhibliService = DefaultGhibliService()) {
         self.service = service
