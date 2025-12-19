@@ -8,18 +8,35 @@
 import SwiftUI
 
 struct FilmListView: View {
-    @State private var filmsViewModel = FilmsVM()
-    
+    @State var filmsViewModel = FilmsVM()
+
     var body: some View {
-        List(filmsViewModel.films) { film in
-            Text(film.title)
+        NavigationStack {
+            switch filmsViewModel.state {
+            case .idle:
+                Text("No films yet")
+            case .loading:
+                Text("Loading...")
+            case .loaded(let array):
+                List(array) { film in
+                    Text(film.title)
+                }
+            case .error(let error):
+                Text(error)
+                    .foregroundColor(Color.red)
+            }
         }
         .task {
-            await filmsViewModel.fetchFilms()
+            await filmsViewModel.fetch()
         }
     }
 }
 
+//#Preview {
+//    FilmListView()
+//}
+
 #Preview {
-    FilmListView()
+    @State @Previewable var vm = FilmsVM(service: MockGhibliService())
+    FilmListView(filmsViewModel: vm)
 }

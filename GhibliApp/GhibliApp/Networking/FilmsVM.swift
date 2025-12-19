@@ -8,18 +8,55 @@
 import Foundation
 import Observation
 
+enum APIError: LocalizedError {
+    case invalidURL
+    case invalidResponse
+    case decoding(Error)
+    case networkError(Error)
+    
+    var errorDescription: String {
+        switch self {
+        case .invalidURL:
+            return "The URL is invalid"
+        case .invalidResponse:
+            return "Invalid response from server"
+        case .decoding(let error):
+            return "Fialed to decode response: \(error.localizedDescription)"
+        case .networkError(let error):
+            return "Network error: \(error.localizedDescription)"
+        }
+    }
+}
+
 @Observable
 class FilmsVM {
+
+    enum State: Equatable {
+        case idle
+        case loading
+        case loaded([Film])
+        case error(String)
+    }
+
+    var state: State = .idle
     var films: [Film] = []
     
-    func fetchFilms() async {
-        let url = URL(string: "https://ghibliapi.vercel.app/films")!
-        
+    private let service: GhibliService
+    
+    init(service: GhibliService = DefaultGhibliService()) {
+        self.service = service
+    }
+
+    func fetch() async {
+        guard state == .idle else { return }
+        state = .loading
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            films = try JSONDecoder().decode([Film].self, from: data)
+            let films = try await service.fetchFilms()
+            self.state = .loaded(films)
+        } catch let error as APIError {
+            self.state = .error(error.localizedDescription)
         } catch {
-            print(error)
+            self.state = .error("Unkown error")
         }
     }
 }
