@@ -9,8 +9,9 @@ import SwiftUI
 
 struct FavoritesScreen: View {
 
-    let viewModel: FilmsVM
-    
+    let filmsVM: FilmsVM
+    let favoritesVM: FavoritesVM
+
     var films: [Film] {
         []
     }
@@ -19,9 +20,18 @@ struct FavoritesScreen: View {
         NavigationStack {
             Group {
                 if films.isEmpty {
-                    ContentUnavailableView("No Favorites yet", systemImage: "heart")
+                    ContentUnavailableView(
+                        "No Favorites yet",
+                        systemImage: "heart"
+                    )
                 } else {
-                    FilmListView(films: films)
+                    FilmListView(
+                        films: films,
+                        isFavorite: { favoritesVM.isFavorite(filmId: $0) },
+                        toggleFavorite: {
+                            favoritesVM.toggleFavorite(filmId: $0)
+                        },
+                    )
                 }
             }
             .navigationTitle("Favorites")
@@ -30,5 +40,8 @@ struct FavoritesScreen: View {
 }
 
 #Preview {
-    FavoritesScreen(viewModel: FilmsVM(service: MockGhibliService()))
+    FavoritesScreen(
+        filmsVM: FilmsVM(service: MockGhibliService()),
+        favoritesVM: FavoritesVM()
+    )
 }

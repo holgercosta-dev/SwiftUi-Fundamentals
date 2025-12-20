@@ -8,19 +8,26 @@
 import SwiftUI
 
 struct FilmsScreen: View {
-    
-    let viewModel: FilmsVM
-    
+
+    let filmsVM: FilmsVM
+    let favoritesVM: FavoritesVM
+
     var body: some View {
         NavigationStack {
             Group {
-                switch viewModel.state {
+                switch filmsVM.state {
                 case .idle:
                     EmptyView()
                 case .loading:
                     ProgressView()
                 case .loaded(let films):
-                    FilmListView(films: films)
+                    FilmListView(
+                        films: films,
+                        isFavorite: { favoritesVM.isFavorite(filmId: $0) },
+                        toggleFavorite: {
+                            favoritesVM.toggleFavorite(filmId: $0)
+                        },
+                    )
                 case .error(let error):
                     Text(error)
                         .foregroundColor(Color.red)
@@ -29,11 +36,14 @@ struct FilmsScreen: View {
             .navigationTitle("Ghibli Movies")
         }
         .task {
-            await viewModel.fetch()
+            await filmsVM.fetch()
         }
     }
 }
 
 #Preview {
-    FilmsScreen(viewModel: FilmsVM(service: MockGhibliService()))
+    FilmsScreen(
+        filmsVM: FilmsVM(service: MockGhibliService()),
+        favoritesVM: FavoritesVM(),
+    )
 }

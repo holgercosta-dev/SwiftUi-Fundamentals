@@ -10,15 +10,16 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var filmsVM = FilmsVM()
+    @State private var favoritesVM = FavoritesVM()
     
     var body: some View {
         TabView {
             Tab("Movies", systemImage: "movieclapper") {
-                FilmsScreen(viewModel: filmsVM)
+                FilmsScreen(filmsVM: filmsVM, favoritesVM: favoritesVM)
             }
             
             Tab("Favorites", systemImage: "heart") {
-                FavoritesScreen(viewModel: filmsVM)
+                FavoritesScreen(filmsVM: filmsVM, favoritesVM: favoritesVM)
             }
             
             Tab("Settings", systemImage: "gear") {
@@ -28,6 +29,9 @@ struct ContentView: View {
             Tab(role: .search) {
                 SearchScreen()
             }
+        }
+        .task {
+            favoritesVM.load()
         }
     }
 }
