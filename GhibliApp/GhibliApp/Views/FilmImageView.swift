@@ -9,10 +9,18 @@ import SwiftUI
 
 struct FilmImageView: View {
 
-    let urlPath: String
+    let url: URL?
+    
+    init(urlPath: String) {
+        self.url = URL(string: urlPath)
+    }
+    
+    init(url: URL) {
+        self.url = url
+    }
 
     var body: some View {
-        AsyncImage(url: URL(string: urlPath)) { phase in
+        AsyncImage(url: url) { phase in
             switch phase {
             case .empty:
                 Color(white: 0.8)
