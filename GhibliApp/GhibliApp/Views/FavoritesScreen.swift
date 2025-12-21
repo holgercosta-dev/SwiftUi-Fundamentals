@@ -13,7 +13,8 @@ struct FavoritesScreen: View {
     let favoritesVM: FavoritesVM
 
     var films: [Film] {
-        []
+        let favorites = favoritesVM.favoriteIds
+        return filmsVM.films.filter { favorites.contains($0.id) }
     }
 
     var body: some View {

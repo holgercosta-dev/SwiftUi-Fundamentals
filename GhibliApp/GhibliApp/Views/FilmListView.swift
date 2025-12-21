@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FilmListView: View {
-    
+
     let films: [Film]
     let isFavorite: (String) -> Bool
     let toggleFavorite: (String) -> Void
@@ -19,17 +19,45 @@ struct FilmListView: View {
                 HStack {
                     FilmImageView(urlPath: film.image)
                         .frame(width: 100, height: 150)
-                    Text(film.title)
-                    Button {
-                        toggleFavorite(film.id)
-                    } label: {
-                        Image(systemName: isFavorite(film.id) ? "heart.fill" : "heart")
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text(film.title)
+                                .bold()
+                            Spacer()
+                            Button {
+                                toggleFavorite(film.id)
+                            } label: {
+                                let isFavorite = isFavorite(film.id)
+                                Image(
+                                    systemName: isFavorite
+                                        ? "heart.fill" : "heart"
+                                )
+                                .foregroundColor(
+                                    isFavorite ? Color.red : Color.black
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .controlSize(.large)
+                        }
+                        .padding(.bottom)
+
+                        Text("Directed by \(film.director)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Text("Released: \(film.releaseYear)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
+
             }
         }
         .navigationDestination(for: Film.self) { film in
-            FilmDetailView(film: film)
+            FilmDetailView(
+                film: film,
+                isFavorite: isFavorite,
+                toggleFavorite: toggleFavorite
+            )
         }
     }
 }
