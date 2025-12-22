@@ -8,8 +8,86 @@
 import SwiftUI
 
 struct HomeScreen: View {
+
+    @State var calories: Int = 123
+    @State var active: Int = 123
+    @State var stand: Int = 123
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScrollView(showsIndicators: false) {
+            VStack {
+                Text("Welcome")
+                    .font(.largeTitle)
+                    .padding()
+
+                HStack {
+
+                    Spacer()
+
+                    VStack {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Calories")
+                                .font(.callout)
+                                .bold()
+                                .foregroundColor(.red)
+
+                            Text("123 kcal")
+                                .bold()
+                        }
+                        .padding()
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Active")
+                                .font(.callout)
+                                .bold()
+                                .foregroundColor(.red)
+
+                            Text("52 mins")
+                                .bold()
+                        }
+                        .padding()
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Stand")
+                                .font(.callout)
+                                .bold()
+                                .foregroundColor(.red)
+
+                            Text("8 hours")
+                                .bold()
+                        }
+                    }
+
+                    Spacer()
+
+                    ZStack {
+                        ProgressCircleView(
+                            progress: $calories,
+                            goal: 600,
+                            color: .red
+                        )
+                        
+                        ProgressCircleView(
+                            progress: $active,
+                            goal: 600,
+                            color: .green
+                        )
+                        .padding(.all, 20)
+                        
+                        ProgressCircleView(
+                            progress: $stand,
+                            goal: 600,
+                            color: .blue
+                        )
+                        .padding(.all, 40)
+                    }
+                    .padding(.horizontal)
+
+                    Spacer()
+                }
+                .padding()            
+            }
+        }
     }
 }
 
