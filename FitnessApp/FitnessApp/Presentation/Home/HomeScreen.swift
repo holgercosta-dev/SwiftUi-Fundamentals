@@ -34,10 +34,10 @@ struct HomeScreen: View {
                                     .bold()
                                     .foregroundColor(.red)
                                 
-                                Text("123 kcal")
+                                Text("\(homeVM.calories) kcal")
                                     .bold()
                             }
-                            .padding()
+                            .padding(.top)
                             
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Active")
@@ -45,10 +45,10 @@ struct HomeScreen: View {
                                     .bold()
                                     .foregroundColor(.red)
                                 
-                                Text("52 mins")
+                                Text("\(homeVM.active) mins")
                                     .bold()
                             }
-                            .padding()
+                            .padding(.top)
                             
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Stand")
@@ -56,9 +56,10 @@ struct HomeScreen: View {
                                     .bold()
                                     .foregroundColor(.red)
                                 
-                                Text("8 hours")
+                                Text("\(homeVM.stand) hours")
                                     .bold()
                             }
+                            .padding(.top)
                         }
                         
                         Spacer()
@@ -145,6 +146,9 @@ struct HomeScreen: View {
                     }
                 }
             }
+        }
+        .task {
+            await homeVM.loadHealthData()
         }
     }
 }

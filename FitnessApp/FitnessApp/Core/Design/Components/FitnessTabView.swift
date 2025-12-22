@@ -30,7 +30,9 @@ struct FitnessTabView: View {
                     Image(systemName: "house")
                     Text("Home")
                 }
+                .environment(GetHealthData())
                 .injectVM(HomeVM.self)
+                
 
             HistoricDataScreen()
                 .tag("Historic_Data")
