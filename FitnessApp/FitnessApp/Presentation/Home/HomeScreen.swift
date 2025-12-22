@@ -6,14 +6,16 @@
 //
 
 import SwiftUI
+import Observation
+
+
 
 struct HomeScreen: View {
-
-    @State var calories: Int = 123
-    @State var active: Int = 123
-    @State var stand: Int = 123
+    
+    @Environment(HomeVM.self) var homeVM: HomeVM
 
     var body: some View {
+        @Bindable var homeVM = homeVM
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading) {
@@ -63,20 +65,20 @@ struct HomeScreen: View {
                         
                         ZStack {
                             ProgressCircleView(
-                                progress: $calories,
+                                progress: $homeVM.calories,
                                 goal: 600,
                                 color: .red
                             )
                             
                             ProgressCircleView(
-                                progress: $active,
+                                progress: $homeVM.active,
                                 goal: 600,
                                 color: .green
                             )
                             .padding(.all, 20)
                             
                             ProgressCircleView(
-                                progress: $stand,
+                                progress: $homeVM.stand,
                                 goal: 600,
                                 color: .blue
                             )
@@ -148,5 +150,7 @@ struct HomeScreen: View {
 }
 
 #Preview {
+    let vm = HomeVM()
     HomeScreen()
+        .environment(vm)
 }
