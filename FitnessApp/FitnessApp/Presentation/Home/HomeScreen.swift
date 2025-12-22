@@ -15,7 +15,7 @@ struct HomeScreen: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack {
+            VStack(alignment: .leading) {
                 Text("Welcome")
                     .font(.largeTitle)
                     .padding()
@@ -66,14 +66,14 @@ struct HomeScreen: View {
                             goal: 600,
                             color: .red
                         )
-                        
+
                         ProgressCircleView(
                             progress: $active,
                             goal: 600,
                             color: .green
                         )
                         .padding(.all, 20)
-                        
+
                         ProgressCircleView(
                             progress: $stand,
                             goal: 600,
@@ -85,7 +85,35 @@ struct HomeScreen: View {
 
                     Spacer()
                 }
-                .padding()            
+                .padding()
+
+                HStack {
+                    Text("Fitness Activity")
+                        .font(.title2)
+
+                    Spacer()
+
+                    Button {
+                        print("show more")
+                    } label: {
+                        Text("Show more")
+                            .padding(.all, 10)
+                            .foregroundColor(.white)
+                            .background(.blue)
+                            .cornerRadius(20)
+                    }
+                }
+                .padding(.horizontal)
+
+                LazyVGrid(
+                    columns: Array(repeating: GridItem(spacing: 5), count: 2)
+                ) {
+                    ActivityCard(activity: Activity.sample)
+                    ActivityCard(activity: Activity.sample)
+                    ActivityCard(activity: Activity.sample)
+                    ActivityCard(activity: Activity.sample)
+                }
+                .padding(.horizontal)
             }
         }
     }
