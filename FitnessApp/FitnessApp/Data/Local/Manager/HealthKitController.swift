@@ -15,29 +15,31 @@ enum HealthDataType: String {
     case stand = "stand"
 }
 
-class HealthManager {
+actor HealthKitController {
 
     private let healthStore: HKHealthStore
 
     init(healthstore: HKHealthStore = HKHealthStore()) {
         self.healthStore = healthstore
-        loadHealthData()
+        Task {
+            await loadHealthData()
+        }
     }
 
-    private func loadHealthData() {
+    private func loadHealthData() async {
         let calories = HKQuantityType(.activeEnergyBurned)
         let exercise = HKQuantityType(.appleExerciseTime)
         let stand = HKCategoryType(.appleStandHour)
 
         let healthTypes: Set = [calories, exercise, stand]
 
-        Task {
-            do {
-                try await healthStore.requestAuthorization(
-                    toShare: [],
-                    read: healthTypes,
-                )
-            }
+        do {
+            try await healthStore.requestAuthorization(
+                toShare: [],
+                read: healthTypes,
+            )
+        } catch {
+            print(error)
         }
     }
 
