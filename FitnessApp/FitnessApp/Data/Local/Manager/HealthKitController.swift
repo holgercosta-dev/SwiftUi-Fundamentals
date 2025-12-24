@@ -10,9 +10,8 @@ import Foundation
 import HealthKit
 
 enum HealthDataType: String {
-    case calories = "calories"
-    case active = "active"
-    case stand = "stand"
+    case today = "today"
+    case unknown = "unknown"
 }
 
 actor HealthKitController {
@@ -43,20 +42,67 @@ actor HealthKitController {
         }
     }
 
-    //Todo: create generic function to fetch data as a double by passing an enum value that represents the data we want
-    func fetch(type: HealthDataType) async -> Double? {
-        var calorieCount: Double?
-        fetchCaloriesBurnedForToday { result in
+    func fetch(type: HealthDataType)
+    async -> DataResult<HealthKitDao, Error> {
+
+        switch type {
+        case .today:
             do {
-                calorieCount = try result.get()
+                let data = try await fetchHealthDataForToday()
+                return DataResult.success(data)
             } catch {
-                calorieCount = nil
+                return DataResult.failure(error)
             }
+        case .unknown:
+            return DataResult.failure(NSError())
         }
 
-        return calorieCount
+    }
+}
+
+extension HealthKitController {
+    private func fetchHealthDataForToday() async throws -> HealthKitDao {
+        
+        var healthKitDao = HealthKitDao()
+        var localError: Error? = nil
+        
+        fetchCaloriesBurnedForToday { result in
+            do {
+                healthKitDao.calories = try result.get()
+            } catch {
+                print(error.localizedDescription)
+                localError = error
+            }
+        }
+        
+        fetchExerciseForToday { result in
+            do {
+                healthKitDao.exercise = try result.get()
+            } catch {
+                print(error.localizedDescription)
+                localError = error
+            }
+        }
+        
+        fetchStandingHoursForToday { result in
+            do {
+                healthKitDao.stand = try result.get()
+            } catch {
+                print(error.localizedDescription)
+                localError = error
+            }
+        }
+        
+        guard localError == nil else {
+            //Todo: validate data before throwing error? Or see what kind of error before throwing it? Could we show partial data?
+            throw localError!
+        }
+        
+        return healthKitDao
+        
     }
 
+    //Todo: refactor duplicate code
     private func fetchCaloriesBurnedForToday(
         completion: @escaping ((Result<Double, Error>) -> Void)
     ) {
@@ -134,5 +180,4 @@ actor HealthKitController {
 
         healthStore.execute(query)
     }
-
 }

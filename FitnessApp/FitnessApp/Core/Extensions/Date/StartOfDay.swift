@@ -9,6 +9,7 @@ import Foundation
 
 extension Date {
     
+    nonisolated
     static var startOfDay: Date {
         let calendar = Calendar.current
         return calendar.startOfDay(for: Date())

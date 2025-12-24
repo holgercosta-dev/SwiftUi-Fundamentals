@@ -8,5 +8,5 @@
 import Foundation
 
 protocol HealthDataRepositoryProtocol {
-    func getDataFor(type HealthDataTypeString: String) async
+    func getHealthKitDataFor(type HealthDataTypeString: String) async -> DataResult<HealthKitDao, Error>
 }

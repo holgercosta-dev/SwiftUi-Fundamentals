@@ -16,7 +16,30 @@ struct HomeScreen: View {
 
     var body: some View {
         @Bindable var homeVM = homeVM
+        
+        Group {
+            switch homeVM.uiState {
+            case .idle:
+                EmptyView()
+            case .loading:
+                ProgressView()
+            case .success(let state):
+                SuccessContent(state)
+            case .error(let error):
+                ErrorContent(error)
+            }
+        }
+        .task {
+            await homeVM.loadHealthData()
+        }
+        
+    }
+}
+
+extension HomeScreen {
+    private func SuccessContent(_ state: HomeUiState) -> some View {
         NavigationStack {
+            @Bindable var state = state
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading) {
                     Text("Welcome")
@@ -34,7 +57,7 @@ struct HomeScreen: View {
                                     .bold()
                                     .foregroundColor(.red)
                                 
-                                Text("\(homeVM.calories) kcal")
+                                Text("\(state.calories) kcal")
                                     .bold()
                             }
                             .padding(.top)
@@ -45,7 +68,7 @@ struct HomeScreen: View {
                                     .bold()
                                     .foregroundColor(.red)
                                 
-                                Text("\(homeVM.active) mins")
+                                Text("\(state.active) mins")
                                     .bold()
                             }
                             .padding(.top)
@@ -56,7 +79,7 @@ struct HomeScreen: View {
                                     .bold()
                                     .foregroundColor(.red)
                                 
-                                Text("\(homeVM.stand) hours")
+                                Text("\(state.stand) hours")
                                     .bold()
                             }
                             .padding(.top)
@@ -66,20 +89,20 @@ struct HomeScreen: View {
                         
                         ZStack {
                             ProgressCircleView(
-                                progress: $homeVM.calories,
+                                progress: $state.calories,
                                 goal: 600,
                                 color: .red
                             )
                             
                             ProgressCircleView(
-                                progress: $homeVM.active,
+                                progress: $state.active,
                                 goal: 600,
                                 color: .green
                             )
                             .padding(.all, 20)
                             
                             ProgressCircleView(
-                                progress: $homeVM.stand,
+                                progress: $state.stand,
                                 goal: 600,
                                 color: .blue
                             )
@@ -147,14 +170,14 @@ struct HomeScreen: View {
                 }
             }
         }
-        .task {
-            await homeVM.loadHealthData()
-        }
+    }
+    
+    private func ErrorContent(_ error: Error) -> some View {
+        Text("Something went wrong.\n \(error.localizedDescription)")
     }
 }
 
 #Preview {
-    let vm = HomeVM()
     HomeScreen()
-        .environment(vm)
+        .injectHomeScreenDependencies(useMocks: true)
 }

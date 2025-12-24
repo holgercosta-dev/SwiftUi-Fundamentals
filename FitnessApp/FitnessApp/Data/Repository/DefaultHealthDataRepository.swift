@@ -7,20 +7,20 @@
 
 import Foundation
 
-class DefaultHealthDataRepository: HealthDataRepositoryProtocol {
+actor DefaultHealthDataRepository: HealthDataRepositoryProtocol {
 
-    private let healthManager: HealthKitController
+    private let healthKitController: HealthKitController
 
-    init(healthManager: HealthKitController = HealthKitController()) {
-        self.healthManager = healthManager
+    init(healthKitController: HealthKitController = HealthKitController()) {
+        self.healthKitController = healthKitController
     }
 
-    func getDataFor(type HealthDataTypeString: String) async {
+    func getHealthKitDataFor(type HealthDataTypeString: String) async -> DataResult<HealthKitDao, Error> {
         let type =
             HealthDataType(rawValue: HealthDataTypeString)
-            ?? HealthDataType.active
-        
-        await healthManager.fetch(type: type)
+            ?? HealthDataType.unknown
+
+        return await healthKitController.fetch(type: type)
     }
 
 }
