@@ -8,21 +8,37 @@
 import SwiftUI
 
 extension View {
-    func injectHomeScreenDependencies(useMocks: Bool = false) -> some View {
-        self.modifier(HomeScreenProvider(useMocks: useMocks))
+    func injectHomeScreenDependencies() -> some View {
+        self.modifier(HomeScreenProvider())
+    }
+    
+    func injectMockHomeScreenDependencies() -> some View {
+        self.modifier(MockHomeScreenProvider())
     }
 }
 
-struct HomeScreenProvider: ViewModifier {
-    
-    let useMocks: Bool
-    
+private struct HomeScreenProvider: ViewModifier {
+
     @State var viewModel = HomeVM()
-    @State var useCase = GetHealthData()
+    var useCase = GetHealthData()
+    var mapper = HomeUiMapper()
 
     func body(content: Content) -> some View {
         content
             .environment(useCase)
+            .environment(mapper)
             .environment(viewModel)
     }
+}
+
+//Todo: configure mock provider
+private struct MockHomeScreenProvider: ViewModifier {
+
+    func body(content: Content) -> some View {
+        content
+        //            .environment(useCase)
+        //            .environment(mapper)
+        //            .environment(viewModel)
+    }
+
 }

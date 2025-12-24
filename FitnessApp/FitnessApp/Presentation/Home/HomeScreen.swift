@@ -8,8 +8,6 @@
 import SwiftUI
 import Observation
 
-
-
 struct HomeScreen: View {
     
     @Environment(HomeVM.self) var homeVM: HomeVM
@@ -57,7 +55,7 @@ extension HomeScreen {
                                     .bold()
                                     .foregroundColor(.red)
                                 
-                                Text("\(state.calories) kcal")
+                                Text(state.caloriesLabel)
                                     .bold()
                             }
                             .padding(.top)
@@ -68,7 +66,7 @@ extension HomeScreen {
                                     .bold()
                                     .foregroundColor(.red)
                                 
-                                Text("\(state.active) mins")
+                                Text(state.activeLabel)
                                     .bold()
                             }
                             .padding(.top)
@@ -79,7 +77,7 @@ extension HomeScreen {
                                     .bold()
                                     .foregroundColor(.red)
                                 
-                                Text("\(state.stand) hours")
+                                Text(state.standLabel)
                                     .bold()
                             }
                             .padding(.top)
@@ -179,5 +177,5 @@ extension HomeScreen {
 
 #Preview {
     HomeScreen()
-        .injectHomeScreenDependencies(useMocks: true)
+        .injectMockHomeScreenDependencies()
 }

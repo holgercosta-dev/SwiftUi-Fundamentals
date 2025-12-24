@@ -9,5 +9,7 @@ import Foundation
 
 nonisolated
 struct HealthKit {
-    
+    let calories: Double?
+    let exercise: Double?
+    let stand: Double?
 }
