@@ -45,4 +45,5 @@ struct FitnessTabView: View {
 
 #Preview {
     FitnessTabView()
+        .injectMockHomeScreenDependencies()
 }

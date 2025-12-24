@@ -8,16 +8,21 @@
 import Foundation
 
 nonisolated
-struct HealthKitDao {
+    struct HealthKitDao
+{
     var calories: Double?
     var exercise: Double?
     var stand: Double?
 }
 
 extension HealthKitDao {
-    
+
     func toDomain() -> HealthKit {
-        return HealthKit()
+        return HealthKit(
+            calories: self.calories,
+            exercise: self.exercise,
+            stand: self.stand
+        )
     }
-    
+
 }

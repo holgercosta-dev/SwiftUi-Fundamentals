@@ -9,9 +9,9 @@ import Foundation
 
 actor DefaultHealthDataRepository: HealthDataRepositoryProtocol {
 
-    private let healthKitController: HealthKitController
+    private let healthKitController: HealthKitControllerProtocol
 
-    init(healthKitController: HealthKitController = HealthKitController()) {
+    init(healthKitController: HealthKitControllerProtocol = DefaultHealthKitController()) {
         self.healthKitController = healthKitController
     }
 

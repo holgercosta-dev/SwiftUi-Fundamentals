@@ -10,8 +10,18 @@ import SwiftUI
 
 class HomeVM: ObservableVM {
 
-    @Environment(GetHealthData.self) var getHealthData: GetHealthData
-    @Environment(HomeUiMapper.self) var mapper: HomeUiMapper
+    //@Environment(GetHealthData.self) var getHealthData: GetHealthData
+    private var getHealthData: GetHealthData = GetHealthData()
+    //@Environment(HomeUiMapper.self) private var mapper: HomeUiMapper
+    private let mapper: HomeUiMapper = HomeUiMapper()
+    
+    required init() {
+        
+    }
+    
+    required init(getHealthData: GetHealthData) {
+        self.getHealthData = getHealthData
+    }
 
     var uiState: UiState<HomeUiState> = UiState.idle
 

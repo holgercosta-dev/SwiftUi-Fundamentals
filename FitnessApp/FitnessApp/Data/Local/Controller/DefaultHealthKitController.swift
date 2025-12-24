@@ -14,36 +14,22 @@ enum HealthDataType: String {
     case unknown = "unknown"
 }
 
-actor HealthKitController {
+actor DefaultHealthKitController {
 
     private let healthStore: HKHealthStore
 
     init(healthstore: HKHealthStore = HKHealthStore()) {
         self.healthStore = healthstore
-        Task {
-            await loadHealthData()
-        }
     }
+}
 
-    private func loadHealthData() async {
-        let calories = HKQuantityType(.activeEnergyBurned)
-        let exercise = HKQuantityType(.appleExerciseTime)
-        let stand = HKCategoryType(.appleStandHour)
-
-        let healthTypes: Set = [calories, exercise, stand]
-
-        do {
-            try await healthStore.requestAuthorization(
-                toShare: [],
-                read: healthTypes,
-            )
-        } catch {
-            print(error)
-        }
-    }
-
+extension DefaultHealthKitController: HealthKitControllerProtocol {
     func fetch(type: HealthDataType)
-    async -> DataResult<HealthKitDao, Error> {
+        async -> DataResult<HealthKitDao, Error>
+    {
+        if await checkIfAuthIsNeeded() {
+            await showAuth()
+        }
 
         switch type {
         case .today:
@@ -60,12 +46,51 @@ actor HealthKitController {
     }
 }
 
-extension HealthKitController {
-    private func fetchHealthDataForToday() async throws -> HealthKitDao {
+extension DefaultHealthKitController {
+    
+    private func checkIfAuthIsNeeded() async -> Bool {
+        let calories = HKQuantityType(.activeEnergyBurned)
+        let exercise = HKQuantityType(.appleExerciseTime)
+        let stand = HKCategoryType(.appleStandHour)
         
+        let healthTypes: Set = [calories, exercise, stand]
+        
+        do {
+            let status = try await healthStore.statusForAuthorizationRequest(
+                toShare: [],
+                read: healthTypes
+            )
+            
+            return status != HKAuthorizationRequestStatus.unnecessary
+        } catch {
+            print(error)
+            return true
+        }
+    }
+    
+    private func showAuth() async {
+        let calories = HKQuantityType(.activeEnergyBurned)
+        let exercise = HKQuantityType(.appleExerciseTime)
+        let stand = HKCategoryType(.appleStandHour)
+
+        let healthTypes: Set = [calories, exercise, stand]
+
+        do {
+            try await healthStore.requestAuthorization(
+                toShare: [],
+                read: healthTypes,
+            )
+        } catch {
+            print(error)
+        }
+    }
+    
+    
+    private func fetchHealthDataForToday() async throws -> HealthKitDao {
+
         var healthKitDao = HealthKitDao()
         var localError: Error? = nil
-        
+
         fetchCaloriesBurnedForToday { result in
             do {
                 healthKitDao.calories = try result.get()
@@ -74,7 +99,7 @@ extension HealthKitController {
                 localError = error
             }
         }
-        
+
         fetchExerciseForToday { result in
             do {
                 healthKitDao.exercise = try result.get()
@@ -83,7 +108,7 @@ extension HealthKitController {
                 localError = error
             }
         }
-        
+
         fetchStandingHoursForToday { result in
             do {
                 healthKitDao.stand = try result.get()
@@ -92,14 +117,14 @@ extension HealthKitController {
                 localError = error
             }
         }
-        
+
         guard localError == nil else {
             //Todo: validate data before throwing error? Or see what kind of error before throwing it? Could we show partial data?
             throw localError!
         }
-        
+
         return healthKitDao
-        
+
     }
 
     //Todo: refactor duplicate code
