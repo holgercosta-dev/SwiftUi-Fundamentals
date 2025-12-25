@@ -47,27 +47,28 @@ extension DefaultHealthKitController: HealthKitControllerProtocol {
 }
 
 extension DefaultHealthKitController {
-    
+
     private func checkIfAuthIsNeeded() async -> Bool {
         let calories = HKQuantityType(.activeEnergyBurned)
         let exercise = HKQuantityType(.appleExerciseTime)
         let stand = HKCategoryType(.appleStandHour)
-        
-        let healthTypes: Set = [calories, exercise, stand]
-        
+        let steps = HKQuantityType(.stepCount)
+
+        let healthTypes: Set = [calories, exercise, stand, steps]
+
         do {
             let status = try await healthStore.statusForAuthorizationRequest(
                 toShare: [],
                 read: healthTypes
             )
-            
+
             return status != HKAuthorizationRequestStatus.unnecessary
         } catch {
             print(error)
             return true
         }
     }
-    
+
     private func showAuth() async {
         let calories = HKQuantityType(.activeEnergyBurned)
         let exercise = HKQuantityType(.appleExerciseTime)
@@ -84,8 +85,7 @@ extension DefaultHealthKitController {
             print(error)
         }
     }
-    
-    
+
     private func fetchHealthDataForToday() async throws -> HealthKitDao {
 
         var healthKitDao = HealthKitDao()
@@ -112,6 +112,24 @@ extension DefaultHealthKitController {
         fetchStandingHoursForToday { result in
             do {
                 healthKitDao.stand = try result.get()
+            } catch {
+                print(error.localizedDescription)
+                localError = error
+            }
+        }
+
+        fetchStepsForToday { result in
+            do {
+                healthKitDao.steps = try result.get()
+            } catch {
+                print(error.localizedDescription)
+                localError = error
+            }
+        }
+        
+        fetchCurrentWeekWorkoutStats { result in
+            do {
+                healthKitDao.exerciseDurationsForCurrentWeek = try result.get()
             } catch {
                 print(error.localizedDescription)
                 localError = error
@@ -203,6 +221,91 @@ extension DefaultHealthKitController {
             completion(.success(Double(standCount)))
         }
 
+        healthStore.execute(query)
+    }
+
+    private func fetchStepsForToday(
+        completion: @escaping ((Result<Double, Error>) -> Void)
+    ) {
+        let steps = HKQuantityType(.stepCount)
+        let predicate = HKQuery.predicateForSamples(
+            withStart: .startOfDay,
+            end: Date()
+        )
+
+        let query = HKStatisticsQuery(
+            quantityType: steps,
+            quantitySamplePredicate: predicate
+        ) { _, results, error in
+            guard let quantity = results?.sumQuantity(), error == nil else {
+                completion(.failure(NSError()))
+                return
+            }
+
+            let steps = quantity.doubleValue(for: .count())
+            completion(.success(steps))
+        }
+
+        healthStore.execute(query)
+    }
+
+    private func fetchCurrentWeekWorkoutStats(
+        completion: @escaping ((Result<[Exercise : Int], Error>) -> Void)
+    ) {
+        let workouts = HKSampleType.workoutType()
+        let predicate = HKQuery.predicateForSamples(
+            withStart: .startOfWeek,
+            end: Date()
+        )
+        let query = HKSampleQuery(
+            sampleType: workouts,
+            predicate: predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: nil
+        ) { _, results, error in
+            guard let workouts = results as? [HKWorkout], error == nil else {
+                completion(.failure(NSError()))
+                return
+            }
+
+            var runningCount: Int = 0
+            var strengthCount: Int = 0
+            var soccerCount: Int = 0
+            var basketballCount: Int = 0
+            var stairsCount: Int = 0
+            var kickboxingcount: Int = 0
+
+            for workout in workouts {
+                let duration = Int(workout.duration) / 60
+                if workout.workoutActivityType == .running {
+                    runningCount += duration
+                } else if workout.workoutActivityType
+                    == .traditionalStrengthTraining
+                {
+                    strengthCount += duration
+                } else if workout.workoutActivityType == .soccer {
+                    soccerCount += duration
+                } else if workout.workoutActivityType == .basketball {
+                    basketballCount += duration
+                } else if workout.workoutActivityType == .stairs {
+                    stairsCount += duration
+                } else if workout.workoutActivityType == .kickboxing {
+                    kickboxingcount += duration
+                }
+            }
+            
+            let map = [
+                Exercise.running : runningCount,
+                Exercise.strength : strengthCount,
+                Exercise.soccer : soccerCount,
+                Exercise.basketball : basketballCount,
+                Exercise.stairs : stairsCount,
+                Exercise.kickboxing : kickboxingcount,
+            ]
+            
+            completion(.success(map))
+        }
+        
         healthStore.execute(query)
     }
 }

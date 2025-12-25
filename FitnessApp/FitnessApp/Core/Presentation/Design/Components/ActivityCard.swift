@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct Activity {
-    let id: Int
+struct Activity: Identifiable {
+    let id: UUID = UUID()
     let title: String
     let subtitle: String
     let image: String
@@ -16,7 +16,6 @@ struct Activity {
     let amount: String
 
     static var sample = Activity(
-        id: 0,
         title: "Today Steps",
         subtitle: "Goal 12,000",
         image: "figure.walk",

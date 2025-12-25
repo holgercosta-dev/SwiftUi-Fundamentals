@@ -32,8 +32,8 @@ class HomeVM: ObservableVM {
 
         switch result {
         case .success(let healthKit):
-            print(healthKit)
             let mappedState = mapper.mapFrom(data: healthKit)
+            print(mappedState.activities)
             self.uiState = UiState.success(mappedState)
         case .failure(let error):
             self.uiState = UiState.error(error)

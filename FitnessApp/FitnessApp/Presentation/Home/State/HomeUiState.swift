@@ -18,7 +18,8 @@ class HomeUiState {
         stand: Int,
         caloriesLabel: String,
         activeLabel: String,
-        standLabel: String
+        standLabel: String,
+        activities: [Activity],
     ) {
         self.calories = calories
         self.active = active
@@ -26,6 +27,7 @@ class HomeUiState {
         self.caloriesLabel = caloriesLabel
         self.activeLabel = activeLabel
         self.standLabel = standLabel
+        self.activities = activities
     }
 
     var calories: Int = 0
@@ -34,4 +36,5 @@ class HomeUiState {
     var caloriesLabel: String = ""
     var activeLabel: String = ""
     var standLabel: String = ""
+    var activities: [Activity] = []
 }

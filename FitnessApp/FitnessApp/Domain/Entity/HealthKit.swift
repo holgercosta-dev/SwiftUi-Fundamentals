@@ -7,9 +7,10 @@
 
 import Foundation
 
-nonisolated
-struct HealthKit {
+nonisolated struct HealthKit {
     let calories: Double?
     let exercise: Double?
     let stand: Double?
+    let steps: Double?
+    let exerciseDurationsForCurrentWeek: [String: Int]
 }

@@ -48,8 +48,8 @@ extension HomeScreen {
                         
                         Spacer()
                         
-                        VStack {
-                            VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading) {
                                 Text("Calories")
                                     .font(.callout)
                                     .bold()
@@ -60,7 +60,7 @@ extension HomeScreen {
                             }
                             .padding(.top)
                             
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading) {
                                 Text("Active")
                                     .font(.callout)
                                     .bold()
@@ -71,7 +71,7 @@ extension HomeScreen {
                             }
                             .padding(.top)
                             
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading) {
                                 Text("Stand")
                                     .font(.callout)
                                     .bold()
@@ -133,10 +133,9 @@ extension HomeScreen {
                     LazyVGrid(
                         columns: Array(repeating: GridItem(spacing: 20), count: 2)
                     ) {
-                        ActivityCard(activity: Activity.sample)
-                        ActivityCard(activity: Activity.sample)
-                        ActivityCard(activity: Activity.sample)
-                        ActivityCard(activity: Activity.sample)
+                        ForEach(state.activities) {
+                            ActivityCard(activity: $0)
+                        }
                     }
                     .padding(.horizontal)
                     
