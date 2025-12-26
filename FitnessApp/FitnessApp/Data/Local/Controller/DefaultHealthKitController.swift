@@ -126,10 +126,19 @@ extension DefaultHealthKitController {
                 localError = error
             }
         }
-        
+
         fetchCurrentWeekWorkoutStats { result in
             do {
                 healthKitDao.exerciseDurationsForCurrentWeek = try result.get()
+            } catch {
+                print(error.localizedDescription)
+                localError = error
+            }
+        }
+        
+        fetchWorkoutsForMonth(month: Date()) { result in
+            do {
+                healthKitDao.workoutData = try result.get()
             } catch {
                 print(error.localizedDescription)
                 localError = error
@@ -250,7 +259,7 @@ extension DefaultHealthKitController {
     }
 
     private func fetchCurrentWeekWorkoutStats(
-        completion: @escaping ((Result<[Exercise : Int], Error>) -> Void)
+        completion: @escaping ((Result<[Exercise: Int], Error>) -> Void)
     ) {
         let workouts = HKSampleType.workoutType()
         let predicate = HKQuery.predicateForSamples(
@@ -293,17 +302,59 @@ extension DefaultHealthKitController {
                     kickboxingcount += duration
                 }
             }
-            
+
             let map = [
-                Exercise.running : runningCount,
-                Exercise.strength : strengthCount,
-                Exercise.soccer : soccerCount,
-                Exercise.basketball : basketballCount,
-                Exercise.stairs : stairsCount,
-                Exercise.kickboxing : kickboxingcount,
+                Exercise.running: runningCount,
+                Exercise.strength: strengthCount,
+                Exercise.soccer: soccerCount,
+                Exercise.basketball: basketballCount,
+                Exercise.stairs: stairsCount,
+                Exercise.kickboxing: kickboxingcount,
             ]
-            
+
             completion(.success(map))
+        }
+
+        healthStore.execute(query)
+    }
+
+    private func fetchWorkoutsForMonth(
+        month: Date,
+        completion: @escaping (Result<[WorkoutDataDao], Error>) -> Void
+    ) {
+        let workouts = HKSampleType.workoutType()
+        let (startDate, endDate) = month.monthStartAndEndDate()
+        let predicate = HKQuery.predicateForSamples(
+            withStart: startDate,
+            end: endDate
+        )
+        let sortDescriptor = NSSortDescriptor(
+            key: HKSampleSortIdentifierStartDate,
+            ascending: false
+        )
+        let query = HKSampleQuery(
+            sampleType: workouts,
+            predicate: predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: [sortDescriptor]
+        ) { _, results, error in
+            guard let workouts = results as? [HKWorkout], error == nil else {
+                completion(.failure(NSError()))
+                return
+            }
+
+            let workoutsArray = workouts.map {
+                WorkoutDataDao(
+                    type: $0.workoutActivityType.rawValue,
+                    duration: $0.duration,
+                    startDate: $0.startDate,
+                    energyBurned: $0.totalEnergyBurned?.doubleValue(
+                        for: .kilocalorie()
+                    ) ?? 0
+                )
+            }
+
+            completion(.success(workoutsArray))
         }
         
         healthStore.execute(query)

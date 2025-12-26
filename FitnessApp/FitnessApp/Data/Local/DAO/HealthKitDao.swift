@@ -13,6 +13,7 @@ nonisolated struct HealthKitDao {
     var stand: Double?
     var steps: Double?
     var exerciseDurationsForCurrentWeek: [Exercise: Int] = [:]
+    var workoutData: [WorkoutDataDao] = []
 }
 
 enum Exercise: String {
@@ -22,6 +23,13 @@ enum Exercise: String {
     case basketball = "basketball"
     case stairs = "stairs"
     case kickboxing = "kickboxing"
+}
+
+struct WorkoutDataDao {
+    let type: UInt
+    let duration: Double
+    let startDate: Date
+    let energyBurned: Double
 }
 
 extension HealthKitDao {
@@ -37,7 +45,15 @@ extension HealthKitDao {
             exercise: self.exercise,
             stand: self.stand,
             steps: self.steps,
-            exerciseDurationsForCurrentWeek: dictionary
+            exerciseDurationsForCurrentWeek: dictionary,
+            workoutData: self.workoutData.map {
+                WorkoutData(
+                    type: $0.type,
+                    duration: $0.duration,
+                    startDate: $0.startDate,
+                    energyBurned: $0.energyBurned
+                )
+            }
         )
     }
 

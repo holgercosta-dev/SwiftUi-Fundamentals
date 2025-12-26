@@ -23,6 +23,12 @@ struct MockHealthKitController: HealthKitControllerProtocol {
                 Exercise.stairs : 123,
                 Exercise.basketball : 123,
                 Exercise.kickboxing : 123,
+            ],
+            workoutData: [
+                WorkoutDataDao(type: 0, duration: 123, startDate: Date(), energyBurned: 12345),
+                WorkoutDataDao(type: 1, duration: 123, startDate: Date(), energyBurned: 12345),
+                WorkoutDataDao(type: 3, duration: 123, startDate: Date(), energyBurned: 12345),
+                WorkoutDataDao(type: 4, duration: 123, startDate: Date(), energyBurned: 12345),
             ]
         )
         

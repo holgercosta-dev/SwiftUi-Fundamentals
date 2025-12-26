@@ -53,6 +53,9 @@ private struct MockHomeScreenProvider: ViewModifier {
                 standLabel: "123",
                 activities: [
                     Activity.sample,
+                ],
+                workouts: [
+                    Workout.sample,
                 ]
             )
         )

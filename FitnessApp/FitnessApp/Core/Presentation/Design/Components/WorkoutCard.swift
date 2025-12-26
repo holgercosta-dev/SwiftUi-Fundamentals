@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct Workout {
-    let id: Int
+struct Workout: Identifiable {
+    let id: UUID = UUID()
     let title: String
     let image: String
     let tintColor: Color
@@ -17,7 +17,6 @@ struct Workout {
     let calories: String
 
     static var sample = Workout(
-        id: 0,
         title: "Running",
         image: "figure.run",
         tintColor: .cyan,

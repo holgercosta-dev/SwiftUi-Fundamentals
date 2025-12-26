@@ -159,10 +159,9 @@ extension HomeScreen {
                     .padding(.top)
                     
                     LazyVStack {
-                        WorkoutCard(workout: Workout.sample)
-                        WorkoutCard(workout: Workout.sample)
-                        WorkoutCard(workout: Workout.sample)
-                        WorkoutCard(workout: Workout.sample)
+                        ForEach(state.workouts) {
+                            WorkoutCard(workout: $0)
+                        }
                     }
                 }
             }

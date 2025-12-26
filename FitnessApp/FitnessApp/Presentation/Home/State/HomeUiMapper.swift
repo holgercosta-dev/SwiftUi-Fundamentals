@@ -54,7 +54,17 @@ class HomeUiMapper {
                     ]
                 ),
             ]
-            .compactMap { $0 }
+            .compactMap { $0 },
+            workouts: data.workoutData.prefix(4).compactMap { workoutData in
+                Workout(
+                    title: "Title",
+                    image: "Image",
+                    tintColor: .blue,
+                    duration: "\(workoutData.duration)",
+                    date: workoutData.startDate.formatWorkoutDate(),
+                    calories: "\(workoutData.energyBurned)"
+                )
+            }
         )
     }
 
@@ -93,7 +103,7 @@ class HomeUiMapper {
             )
         }
     }
-    
+
     private func mapSoccerActivity(with soccer: Int?) -> Activity? {
         return soccer.map {
             Activity(
@@ -105,7 +115,7 @@ class HomeUiMapper {
             )
         }
     }
-    
+
     private func mapBasketballActivity(with basketball: Int?) -> Activity? {
         return basketball.map {
             Activity(
@@ -117,7 +127,7 @@ class HomeUiMapper {
             )
         }
     }
-    
+
     private func mapStairStepperActivity(with stairs: Int?) -> Activity? {
         return stairs.map {
             Activity(
@@ -129,7 +139,7 @@ class HomeUiMapper {
             )
         }
     }
-    
+
     private func mapKickboxingActivity(with kickboxing: Int?) -> Activity? {
         return kickboxing.map {
             Activity(

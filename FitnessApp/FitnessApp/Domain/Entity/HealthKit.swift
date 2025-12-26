@@ -13,4 +13,5 @@ nonisolated struct HealthKit {
     let stand: Double?
     let steps: Double?
     let exerciseDurationsForCurrentWeek: [String: Int]
+    let workoutData: [WorkoutData]
 }
