@@ -39,7 +39,7 @@ struct FitnessTabView: View {
                     Image(systemName: "chart.line.uptrend.xyaxis")
                     Text("History")
                 }
-                .injectVM(HistoricDataVM.self)
+                .environment(HistoricDataVM())
         }
     }
 }

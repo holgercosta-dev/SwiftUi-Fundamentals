@@ -10,9 +10,7 @@ import SwiftUI
 
 struct HistoricDataScreen: View {
 
-    //@Environment(HistoricDataVM.self) private var historicDataVM: HistoricDataVM
-    
-    @State private var historicDataVM = HistoricDataVM()
+    @Environment(HistoricDataVM.self) private var historicDataVM: HistoricDataVM
 
     var body: some View {
         @Bindable var vm = historicDataVM
@@ -67,5 +65,5 @@ struct HistoricDataScreen: View {
 
 #Preview {
     HistoricDataScreen()
-        .injectVM(HistoricDataVM.self)
+        .environment(HistoricDataVM())
 }

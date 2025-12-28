@@ -19,7 +19,8 @@ struct StepsData: Identifiable {
     let count: Int
 }
 
-class HistoricDataVM: ObservableVM {
+@Observable
+class HistoricDataVM {
     
     enum ChartOptions: String, CaseIterable {
         case oneWeek = "1W"

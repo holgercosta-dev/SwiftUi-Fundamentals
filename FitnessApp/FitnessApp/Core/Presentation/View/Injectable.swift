@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+//Does not work well with updating observable state because it seems to create
+//an extra layer that "disconnects" the bindable properties.
 @Observable
 class ObservableVM {
     
