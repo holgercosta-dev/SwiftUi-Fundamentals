@@ -18,6 +18,7 @@ class ObservableVM {
 
 extension View {
     func injectVM<T: ObservableVM>(_ type: T.Type) -> some View {
-        environment(T())
+        @State var vm = T()
+        return environment(vm)
     }
 }
