@@ -40,6 +40,13 @@ struct FitnessTabView: View {
                     Text("History")
                 }
                 .environment(HistoricDataVM())
+            
+            LeaderboardScreen()
+                .tag("Leaderboard")
+                .tabItem {
+                    Image(systemName: "list.number")
+                    Text("Leaderboard")
+                }
         }
     }
 }
